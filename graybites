@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrayBites Game</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to right, #fbeec1, #f5d9a0);
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #d35400;
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 1.3em;
+      color: #5e412f;
+    }
+    .image-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .food-img {
+      width: 220px;
+      height: 220px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 6px solid #fff7e6;
+      border-radius: 16px;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s, border 0.2s;
+    }
+    .food-img:hover {
+      transform: scale(1.08);
+    }
+    .correct {
+      border-color: #2ecc71;
+      box-shadow: 0 0 15px #2ecc71;
+    }
+    .incorrect {
+      border-color: #e74c3c;
+      box-shadow: 0 0 15px #e74c3c;
+    }
+    #score {
+      margin-top: 25px;
+      font-size: 1.5em;
+      color: #34495e;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍔 GrayBites!</h1>
+  <p>Click the image that looks more tempting (it's in full color!)</p>
+  <div class="image-container" id="imageContainer"></div>
+  <div id="score">Score: 0</div>
+
+  <audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_a29f3088ee.mp3?filename=correct-answer-3-96247.mp3"></audio>
+  <audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_f8223214f8.mp3?filename=wrong-answer-1-96174.mp3"></audio>
+
+  <script>
+    const images = [
+      "https://upload.wikimedia.org/wikipedia/commons/0/0b/RedDot_Burger.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/6f/Pepperoni_pizza.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/0/07/French_fries_02.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/b/bb/Healthy_Salad.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/7/71/Donuts_on_a_plate.jpg"
+    ];
+
+    let score = 0;
+    const scoreDisplay = document.getElementById("score");
+    const imageContainer = document.getElementById("imageContainer");
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+
+    function shuffleArray(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function loadImages() {
+      imageContainer.innerHTML = "";
+      const shuffled = shuffleArray(images).slice(0, 2);
+      const realImageIndex = Math.floor(Math.random() * 2);
+
+      shuffled.forEach((src, index) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.classList.add("food-img");
+        if (index !== realImageIndex) {
+          img.style.filter = "grayscale(100%)";
+        }
+        img.addEventListener("click", () => {
+          if (index === realImageIndex) {
+            score++;
+            img.classList.add("correct");
+            correctSound.play();
+          } else {
+            score--;
+            img.classList.add("incorrect");
+            wrongSound.play();
+          }
+          scoreDisplay.textContent = `Score: ${score}`;
+          setTimeout(loadImages, 1000);
+        });
+        imageContainer.appendChild(img);
+      });
+    }
+
+    loadImages();
+  </script>
+</body>
+</html>
